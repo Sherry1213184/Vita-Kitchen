@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1791136296477,
+      "tag": "0000_dark_sasquatch",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791136329681,
+      "tag": "0001_fluffy_the_captain",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791229162670,
+      "tag": "0002_needy_liz_osborn",
+      "breakpoints": true
+    }
+  ]
+}
