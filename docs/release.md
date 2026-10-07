@@ -3,7 +3,7 @@
 适用范围：10 人以内的邀请制朋友网站，现有 Sites + D1 + R2 架构。
 
 ## 每轮开发
-1. 从最新主分支创建功能分支，一轮聚焦一个可使用的改进。
+1. 从最新主分支创建功能分支，一轮聚焦一个可使用的改进。当前前三轮已按用户要求统一在 PR #2（base=main），无需分轮合并。
 2. 运行 `pnpm install --frozen-lockfile`、`pnpm run typecheck`、`pnpm test`、`pnpm run build`。
 3. 按 README 初始化本地数据库，再运行 `pnpm run dev`；用本地模拟登录验收。
 4. 创建 PR，附 CHANGELOG、本地验证结果及必要截图。另一位维护者体验后合并。
@@ -13,7 +13,7 @@ CI 使用 Node 24 和 package.json 中指定的 pnpm。测试使用 Node 内置 
 ## 发布到现有网站
 1. 网站所有者确认 Sites 端没有尚未同步的修改；GitHub 是协作代码来源，合并前比较两端差异。
 2. 从已验收的 Git commit 发布到原 Site，保留 `.openai/hosting.json` 的 project_id、D1/R2 绑定和邀请制访问。
-3. 如有新增迁移，发布前备份数据并核对迁移；历史迁移不得改写。第一轮无新增迁移；第二轮新增 `drizzle/0003_confused_prism.sql`（四张活动/账本表）。
+3. 如有新增迁移，发布前备份数据并核对迁移；历史迁移不得改写。第一轮无新增迁移；第二轮新增 `drizzle/0003_confused_prism.sql`（四张活动/账本表），第三轮新增 `drizzle/0004_fair_doctor_strange.sql`（三张投票/回忆表）。
 4. 记录 Git commit、Sites 版本、发布时间、操作人及验证结果，确认部署成功后再告知朋友。
 5. 验证登录、菜单、已有订单和照片能正常读取；用约定的测试账号验证新增操作，避免随意给真实朋友下单。
 
@@ -32,7 +32,7 @@ CI 使用 Node 24 和 package.json 中指定的 pnpm。测试使用 Node 内置 
 - 网络重试与并发请求由自动化测试覆盖；不要为验证而重复提交真实订单。
 
 ## 第二轮发布与验收
-- 第二轮分支 `improve/community-round-2` 基于第一轮。第一轮 PR 合并后，将第二轮 PR 的 base 改为 `main` 再审阅合并；不要把第二轮当作直接基于旧 main 的独立补丁。
+- `improve/community-round-2` 现包含前三轮完整提交，统一 PR #2 直接比较 main；PR #1 已被替代，不需要先合并。详见 docs/review.md。
 - 发布前核对历史迁移 0000–0002 已应用，备份生产 D1，追加执行 0003；历史迁移不得重跑或改写。Sites 发布仍由有项目访问权限的所有者进行。
 - 本地已有前三个迁移时，仅执行：
   `node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0003_confused_prism.sql`
@@ -43,3 +43,11 @@ CI 使用 Node 24 和 package.json 中指定的 pnpm。测试使用 Node 内置 
 - 在本地示例账单上测试作废，检查“全部账单”保留记录、总开销和待结清排除该账单；线上账单请由成员核对后操作。
 - 手机检查两个日期输入、原生下拉框、成员勾选、弹窗滚动与关闭按钮；桌面检查导航和卡片，无横向溢出。
 - 结清/撤销不会转账；作废不会退款。错记金额可作废原账后新建，原记录仍可查询。
+
+## 第三轮验收
+- 本地已有迁移 0000–0003 时，追加执行：
+  `node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0004_fair_doctor_strange.sql`
+- 从活动点“投票 / 留回忆”，确认查看范围自动选择该活动；新建日期或目的地投票，多选保存、改票、清空撤回、结束/重新开放。
+- 回忆墙新建照片和小记，选择同行朋友，检查保存的日期与预览；作者编辑后原照片保留，他人不能编辑。
+- 使用本地测试图片核对登录保护与上传限制；不得为验证而上传生产成员的真实照片。
+- 无生产权限时交付统一 PR 和本地验证结果。PR 合并后，仍由所有者按原 Sites 平台流程发布；先备份并核对新增迁移 0003、0004。

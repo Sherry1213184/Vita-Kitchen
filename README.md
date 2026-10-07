@@ -8,9 +8,11 @@
 ## 维护迭代
 - 面向 10 人以内朋友使用，优先方便、美观、快捷。
 - 每轮新增功能、修复和发布状态见 [CHANGELOG.md](CHANGELOG.md)。
+- 所有者一次性审阅前三轮改动见 [docs/review.md](docs/review.md)，统一 PR #2 面向 main；PR #1 已被替代。
 - 协作、验证、发布与回退见 [docs/release.md](docs/release.md)。
 - 第一轮新增手机点菜单快捷入口、个人历史翻页和厨房待处理筛选。
 - 第二轮新增活动出游、报名和默认 GBP 的共享账本，支持活动关联、均分及结清记录；代码待审阅发布。
+- 第三轮新增日期/目的地投票与照片回忆墙，可从活动直接进入；回忆仅作者可编辑。
 - 本地检查：`pnpm run typecheck`、`pnpm test`、`pnpm run build`。
 
 ## 当前功能和约定
@@ -36,13 +38,14 @@ pnpm install --frozen-lockfile
 pnpm run build
 ```
 
-首次在本地运行数据库时，按文件名顺序逐个执行 drizzle 目录的 .sql 文件（目前为 0000、0001、0002、0003）：
+首次在本地运行数据库时，按文件名顺序逐个执行 drizzle 目录的 .sql 文件（目前为 0000、0001、0002、0003、0004）：
 
 ```sh
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_dark_sasquatch.sql
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0001_fluffy_the_captain.sql
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0002_needy_liz_osborn.sql
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0003_confused_prism.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0004_fair_doctor_strange.sql
 pnpm run dev
 ```
 
@@ -60,6 +63,7 @@ portable 开发模式提供仅限 loopback 的模拟 ChatGPT 登录；页面上�
 - lib/kitchen.ts：身份、共享厨房权限、数据库查询和初始菜品
 - app/api/kitchen/route.ts：点菜、上传、编辑菜品、评价和资料保存接口
 - app/api/images/[id]/route.ts：图片读取及访问控制
+- components/social.tsx、lib/social.ts、app/api/social/route.ts：投票、回忆、照片关联和作者编辑
 - db/schema.ts、drizzle/：数据库结构和迁移
 
 ## 登录、访问和发布

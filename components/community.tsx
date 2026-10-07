@@ -16,8 +16,8 @@ type ExpenseDraft = { title: string; amount: string; currency: Currency; payer: 
 const openActivity = (a: Activity) => a.status === 'planning' || a.status === 'confirmed';
 const outstanding = (e: Expense) => !e.voided && e.shares.some(s => s.user !== e.payer && s.amount > 0 && !s.settled);
 
-export default function Community({ section, signedIn, signIn, onProfile }: {
-  section: 'activities' | 'ledger'; signedIn: boolean; signIn: string; onProfile: () => void;
+export default function Community({ section, signedIn, signIn, onProfile, onSocial }: {
+  section: 'activities' | 'ledger'; signedIn: boolean; signIn: string; onProfile: () => void; onSocial: (activityId: string) => void;
 }) {
   const [data, setData] = useState<CommunityData | null>(null), [error, setError] = useState('');
   const [loading, setLoading] = useState(true), [busy, setBusy] = useState(false);
@@ -85,7 +85,7 @@ export default function Community({ section, signedIn, signIn, onProfile }: {
           <div className="rsvp-summary"><Users size={16}/><span>{a.attendance.filter(r => r.choice === 'yes').length} 人参加 · {a.attendance.filter(r => r.choice === 'maybe').length} 人待定</span></div>
           {!!a.attendance.length && <p className="rsvp-names">{a.attendance.map(r => `${r.name}（${r.choice === 'yes' ? '参加' : r.choice === 'maybe' ? '待定' : '不去'}）`).join('、')}</p>}
           {openActivity(a) && <div className="rsvp-buttons" aria-label={`报名 ${a.title}`}>{Object.entries(choices).map(([choice, label]) => <button key={choice} disabled={busy} aria-pressed={a.attendance.some(r => r.user === data.me && r.choice === choice)} onClick={() => send({ action: 'attendance', id: a.id, choice })}>{label}</button>)}</div>}
-          <div className="plan-footer"><button className="secondary-button" disabled={busy} onClick={() => setPlan({ id: a.id, revision: a.revision, title: a.title, kind: a.kind, starts_on: a.starts_on, ends_on: a.ends_on, location: a.location, notes: a.notes, status: a.status })}>编辑计划</button><button className="text-button" disabled={busy} onClick={() => newBill(a.id)}>为活动记账 <ArrowUpRight size={15}/></button></div>
+          <div className="plan-footer"><button className="text-button" disabled={busy} onClick={() => onSocial(a.id)}>投票 / 留回忆</button><button className="secondary-button" disabled={busy} onClick={() => setPlan({ id: a.id, revision: a.revision, title: a.title, kind: a.kind, starts_on: a.starts_on, ends_on: a.ends_on, location: a.location, notes: a.notes, status: a.status })}>编辑计划</button><button className="text-button" disabled={busy} onClick={() => newBill(a.id)}>为活动记账 <ArrowUpRight size={15}/></button></div>
         </article>)}</div> : <div className="empty"><CalendarDays/><h2>下一次，去哪里？</h2><p>先写下想法，日期和地点都可以稍后商量。</p><button onClick={newPlan}>发起第一个计划</button></div>}
       </> : <>
         <div className="community-toolbar"><label className="activity-filter">账本范围<select value={activityFilter} onChange={e => setActivityFilter(e.target.value)}><option value="">所有活动与日常开销</option>{data.activities.map(a => <option key={a.id} value={a.id}>{a.title}</option>)}</select></label><small>默认 GBP · 不同币种分别统计</small></div>
