@@ -10,6 +10,7 @@
 - 每轮新增功能、修复和发布状态见 [CHANGELOG.md](CHANGELOG.md)。
 - 协作、验证、发布与回退见 [docs/release.md](docs/release.md)。
 - 第一轮新增手机点菜单快捷入口、个人历史翻页和厨房待处理筛选。
+- 第二轮新增活动出游、报名和默认 GBP 的共享账本，支持活动关联、均分及结清记录；代码待审阅发布。
 - 本地检查：`pnpm run typecheck`、`pnpm test`、`pnpm run build`。
 
 ## 当前功能和约定
@@ -20,6 +21,8 @@
 - 我的订单按每页 20 单独立查询；厨房显示全部待处理订单及最近 50 单已取餐订单。
 - 个人昵称、房间号、头像；朋友列表不公开房间号。
 - 网站当前为邀请制，访问限制由 ChatGPT Sites 平台执行。
+- 活动出游与账本对所有获邀成员共享；只能以自己身份报名，朋友可共同编辑计划、记录结清。
+- 分摊名单来自已保存昵称的朋友。金额以整数分/便士保存，默认 GBP，可选 CNY/EUR；不跨币种合计，不执行转账。
 
 ## 技术栈
 React + TypeScript + Vinext；Cloudflare Workers、D1（SQLite）、R2；Drizzle 管理数据库结构。
@@ -33,12 +36,13 @@ pnpm install --frozen-lockfile
 pnpm run build
 ```
 
-首次在本地运行数据库时，按文件名顺序逐个执行 drizzle 目录的 .sql 文件（目前为 0000、0001、0002）：
+首次在本地运行数据库时，按文件名顺序逐个执行 drizzle 目录的 .sql 文件（目前为 0000、0001、0002、0003）：
 
 ```sh
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_dark_sasquatch.sql
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0001_fluffy_the_captain.sql
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0002_needy_liz_osborn.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0003_confused_prism.sql
 pnpm run dev
 ```
 

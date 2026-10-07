@@ -1,10 +1,10 @@
 export class KitchenRequestError extends Error {
   constructor(message: string, public needsSignIn = false, public status = 0) { super(message); }
 }
-export async function kitchenRequest(body?: object | FormData, query = '') {
+export async function kitchenRequest(body?: object | FormData, query = '', path = '/api/kitchen') {
   let response: Response;
   try {
-    response = await fetch('/api/kitchen' + query, {
+    response = await fetch(path + query, {
       method: body ? 'POST' : 'GET', credentials: 'same-origin', cache: 'no-store',
       headers: { Accept: 'application/json', ...(body && !(body instanceof FormData) ? {'Content-Type':'application/json'} : {}) },
       ...(body ? {body: body instanceof FormData ? body : JSON.stringify(body)} : {}),

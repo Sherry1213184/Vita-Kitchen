@@ -8,6 +8,7 @@
 - 复用 React/Vinext、D1、R2 和锁文件，不为维护任务迁移托管或增加外部服务。
 - 不接触生产数据库和真实照片。历史 SQL 迁移不可修改，结构变化必须追加迁移。
 - 重要订单规则集中在 lib/orders.ts；新功能按需要拆分，避免整站重写。
+- 活动/账本规则集中在 lib/community.ts；金额使用整数便士/分，默认 GBP，币种不能混算。账单和分摊必须原子保存，保留作废记录。
 - 运行 pnpm run typecheck、pnpm test、pnpm run build，并按变更检查浏览器。
 - 每轮更新 CHANGELOG.md，分别写明新增功能、修复、验证和发布状态。
 - GitHub 合并不等于网站发布；遵循 docs/release.md，保留邀请制和原 project_id。
